@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day Heart Animation</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        function hearta(t) {
+            return 15 * Math.pow(Math.sin(t), 3);
+        }
+
+        function heartb(t) {
+            return 12 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+        }
+
+        let t = 0;
+        let traceT = 0;  // To control how much of the heart has been traced
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight);
+            textAlign(CENTER, CENTER);
+            textSize(24);
+            frameRate(60);
+        }
+
+        function draw() {
+            // Lighter pink gradient background
+            let c1 = color(255, 182, 193); // Light pink
+            let c2 = color(255, 105, 180);  // Medium pink
+            setGradient(0, 0, width, height, c1, c2, 1);
+
+            // Move the heart drawing to the center
+            translate(width / 2, height / 2);
+
+            // Set the black stroke for tracing the heart
+            stroke(0);
+            strokeWeight(2);
+            noFill();  // Make the heart transparent so only the outline is visible
+
+            // Draw the traced heart gradually with a lot of points for smooth line effect
+            for (let i = 0; i < traceT; i += 0.01) {  // Increase the number of points for smoother line
+                let x = hearta(i) * 20;
+                let y = -heartb(i) * 20;
+                point(x, y);  // Plot points to trace the heart
+            }
+
+            // Add some pulsing effect to the heart
+            let x = hearta(t) * 20;
+            let y = -heartb(t) * 20;
+            strokeWeight(2);
+            point(x, y);
+
+            t += 0.05;
+            traceT += 0.05;  // Gradually increase the traced part of the heart
+
+            // Complete the heart drawing by the end of the animation
+            if (traceT > TWO_PI) {
+                noLoop();
+                fill(255, 105, 180); // Soft pink for the text
+                textSize(32);
+                textFont('Georgia');
+                text("Happy Valentine's Day, Hailey <3!", 0, -50);
+            }
+        }
+
+        // Gradient function for smooth background
+        function setGradient(x, y, w, h, c1, c2, axis) {
+            noFill();
+            if (axis === 1) {
+                // Vertical gradient
+                for (let i = 0; i <= h; i++) {
+                    let inter = map(i, 0, h, 0, 1);
+                    let c = lerpColor(c1, c2, inter);
+                    stroke(c);
+                    line(x, y + i, x + w, y + i);
+                }
+            } else {
+                // Horizontal gradient
+                for (let i = 0; i <= w; i++) {
+                    let inter = map(i, 0, w, 0, 1);
+                    let c = lerpColor(c1, c2, inter);
+                    stroke(c);
+                    line(x + i, y, x + i, y + h);
+                }
+            }
+        }
+
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+        }
+    </script>
+</body>
+</html>
